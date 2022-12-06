@@ -187,6 +187,22 @@ class DependencyAnalysis:
             分析対象のテキスト
         '''
         self.document = text
+
+    def analysis(self,text:str=None):
+        """
+        ginzaを用いて形態素解析
+
+        Parameters
+        ----------
+        text : str
+            分析対象のテキスト, by default None
+
+        Returns
+        -------
+        doc
+            形態素解析の結果
+        """
+        return self.nlp(self.document if text == None else text)
     
     def to_dependency_data(self, text:str=None, WorP:bool=True):
         """
