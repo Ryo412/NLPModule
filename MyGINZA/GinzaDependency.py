@@ -166,20 +166,20 @@ class DependencyAnalysis:
         分析対象のテキスト
     
     """
-    def __init__(self):
+    def __init__(self, use_electra:bool=True):
         """
         Parameters:
         --------
-        nlp : spacy.lang.ja.Japanese
-            ja_ginza か ja_ginza_electra
-        document : string
-            分析対象のテキスト
+        use_electra : bool
+          electra modelを用いるか
         """
-        # self.nlp = spacy.load("ja_ginza_electra")
-        self.nlp = spacy.load("ja_ginza")
+        self.nlp = spacy.load("ja_ginza_electra" if use_electra else "ja_ginza")
+        self.model = "ja_ginza_electra"if use_electra else "ja_ginza"
         self.document = None
 
-
+    def __repr__(self):
+        return self.model
+    
     def read_text(self,text):
         '''
         テキストの読み込み
