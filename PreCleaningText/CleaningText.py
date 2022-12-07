@@ -98,13 +98,3 @@ class PreCleaningText:
         """
         cleaned_text = re.sub(r'\d+', replace_number_char, text)
         return cleaned_text
-
-
-
-
-
-
-a = PreCleaningText()
-text = '江頭2:50は40度の高熱が出たが、Ｆｉｎｅでギャラを『500円』ﾏｼでもらった。'
-text_ = a.run_all_method(text)
-print(text_)
