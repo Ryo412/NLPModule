@@ -26,6 +26,9 @@ class Arcs:
         self.end = arcs['end']
         self.label = arcs['label']
 
+    def __repr__(self):
+        return self.label
+
 class WordFeature:
     """
     主辞単語、もしくは文節を保持する。
