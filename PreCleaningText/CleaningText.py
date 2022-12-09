@@ -17,6 +17,8 @@ class PreCleaningText:
         cleaned_text = self.alphabet_to_lower(cleaned_text)
         cleaned_text = self.normalize_number(cleaned_text)
         
+        # 先頭と末尾の空白を削除
+        cleaned_text = cleaned_text.lstrip().rstrip()
         return cleaned_text
 
     def delete_parentheses(self, text):
