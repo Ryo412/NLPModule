@@ -148,7 +148,7 @@ class SentenceFeature:
 
         # 右側にかかる単語を記録
         for right_word in word.right_words:
-            for word_ in self.word_right:
+            for word_ in self.word_list:
                 if(right_word.start == word_.number):
                     right_words.append([word_, left_word.label])
     
