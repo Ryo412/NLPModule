@@ -149,14 +149,14 @@ class SentenceFeature:
         # 右側にかかる単語を記録
         for right_word in word.right_words:
             for word_ in self.word_list:
-                if(right_word.start == word_.number):
-                    right_words.append([word_, left_word.label])
+                if(right_word.end == word_.number):
+                    right_words.append([word_, right_word.label])
     
         return {'left':left_words, 'right':right_words}
 
 class DependencyAnalysis:
     """
-    ginzaを用いた形態素解析を行う。
+    ginzaを用いた形態素解析を行う。 
 
     Attributes
     ----------
@@ -227,10 +227,11 @@ class DependencyAnalysis:
         """
         doc = self.nlp(self.document if text == None else text) # 入力があればそれを使用なければdocument
         document = []
+        func = ginza.bunsetu_phrase_spans if WorP else ginza.bunsetu_spans #主辞単語の係り受けか、文節の係り受けか選択
         for sent_number, sent in enumerate(doc.sents):
             words = []  #単語のlist
-            bunsetu_head_list = ginza.bunsetu_head_list(doc)    #各文節の主辞となるtokenの位置を保存
-            func = ginza.bunsetu_phrase_spans if WorP else ginza.bunsetu_spans #主辞単語の係り受けか、文節の係り受けか選択
+            sent = self.nlp(sent.text)     # tokenの位置をsentenceごとに行わないとバグるので再度形態素（計算の無駄感）
+            bunsetu_head_list = ginza.bunsetu_head_list(sent)    #各文節の主辞となるtokenの位置を保存
 
             for chunk_number, chunk in enumerate(func(sent)):
                 arcs_left = []      #左にかかる係り受け
@@ -247,8 +248,10 @@ class DependencyAnalysis:
                             'end': chunk_number,                        # 自分
                             'label': token.dep_,                        # 係り受けの種類
                         })
-                    except  ValueError: #もし指定tokenの位置に主辞tokenがない場合、スキップする。
+                    except  ValueError: #指定tokenの位置が主辞tokenがない場合、スキップする。
+                        # print("ValueError_left")
                         continue
+                        
                 #右への係り受け関係
                 for token in chunk.rights:
                     try:
@@ -257,11 +260,13 @@ class DependencyAnalysis:
                             'end': bunsetu_head_list.index(token.i),    # 係り受け先 
                             'label': token.dep_,                        # 係り受けの種類
                         })
-                    except ValueError:  #もし指定tokenの位置に主辞tokenがない場合、スキップする。
+                    except ValueError:  #指定tokenの位置が主辞tokenがない場合、スキップする。
+                        # print("ValueError_right")
                         continue
 
                 for arcs in arcs_left: word.append_arcs(arcs, 'left')   # 左からの係り受けを追加
                 for arcs in arcs_right: word.append_arcs(arcs, 'right') # 右への係り受けを追加
                 words.append(word)
+
             document.append(SentenceFeature(sent.text,words, sent_number))
         return document
